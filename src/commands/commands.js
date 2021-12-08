@@ -1,6 +1,6 @@
-import { saveFileSystem, updateFileSystem} from "../data/fileSystem.js" 
-import { require } from "../data/fileSystem.js"
-const chalk = require("chalk")
+import { saveFileSystem, updateFileSystem} from "../data/fileSystem.js"
+import { startTextEditor } from "../commandLine/commandLine.js"
+import chalk from "chalk"
 
 
 const findDirectoryInFileSystem = (fileSystem, dirUrl) => {
@@ -15,63 +15,105 @@ const findDirectoryInFileSystem = (fileSystem, dirUrl) => {
     return [fileSystem, newDirUrl]
 }
 
-export const executeCommand = (user, fileSystem, currentDir, currentDirUrl, command, value = "") => {
+export const executeCommand = (user, fileSystem, currentDir, currentDirUrl, command, value = "") => new Promise(async(resolve, reject) => {
     switch(command) {
         case "pwd":
             console.log("\nPath:", currentDirUrl, "\n")
+            resolve()
+            
             break
         case "ls": {
-            let dirsAndFiles = currentDir.filesAndDirs
-            const filteredDirsAndFiles = dirsAndFiles.filter(obj => obj.readRights.includes(user))
+            let filesAndDirs = currentDir.filesAndDirs
+            const filteredDirsAndFiles = filesAndDirs.filter(obj => obj.readRights.includes(user))
             for(let obj of filteredDirsAndFiles) {
                 if (obj.type === "directory"){
                     console.log(chalk.red(obj.name)) 
                 } else {
-                    console.log(chalk.yellow(obj.name))
+                 console.log(chalk.yellow(obj.name))
                 }
             }
         }
+        resolve()
         break
         case "cd": {
             if (value === "..") {
-                return findDirectoryInFileSystem(fileSystem, currentDirUrl)         
+                resolve(findDirectoryInFileSystem(fileSystem, currentDirUrl))       
             } else {
-                let dirsAndFiles = currentDir.filesAndDirs
-                let directory = dirsAndFiles.find(obj => obj.name === value) 
+                let filesAndDirs = currentDir.filesAndDirs
+                let directory = filesAndDirs.find(obj => obj.name === value) 
                 if(directory !== undefined) {
-                    return [directory, currentDirUrl + `${directory.name}\\`]
+                    resolve([directory, currentDirUrl + `${directory.name}\\`])
                 } else {
                     console.log("The directory does not exit")
                 }
             }
+            break
         }
-        break
         case "mkdir": {
-            const dirsAndFiles = currentDir.filesAndDirs
+            const filesAndDirs = currentDir.filesAndDirs
             const oldDirsAndFiles = currentDir.filesAndDirs
             const newDir = {
                 name : value,
                 type: "directory",
-                readRights: ["admin", user],
-                writeRights: ["admin", user],
+                readRights: ["admin"],
+                writeRights: ["admin"],
                 filesAndDirs: []
             }
-            dirsAndFiles.push(newDir)
-            currentDir.dirsAndFiles = dirsAndFiles
-            updateFileSystem(fileSystem, oldDirsAndFiles, dirsAndFiles)
+            if (user !== "admin") {
+                newDir.readRights.push(name)
+                newDir.writeRights.push(name)
+            }
+            filesAndDirs.push(newDir)
+            currentDir.filesAndDirs = filesAndDirs
+            updateFileSystem(fileSystem, oldDirsAndFiles, filesAndDirs)
             saveFileSystem(fileSystem)
-            return [fileSystem, currentDir]
-        }
-        case "vi":
+            resolve([fileSystem, currentDir])
             break
-        case "rm": {
-            const dirsAndFiles = currentDir.filesAndDirs
+        }
+        case "vi": {
+            const filesAndDirs = currentDir.filesAndDirs
             const oldDirsAndFiles = currentDir.filesAndDirs
-            const filteredArray = dirsAndFiles.filter(obj => obj.name !== value)
-            currentDir.filesAndDirs = filteredArray
-            updateFileSystem(fileSystem, oldDirsAndFiles, dirsAndFiles)
+            let getFile, index 
+            getFile = filesAndDirs.find((obj, i) => {
+                if (obj.name === value) {
+                    index = i
+                    return obj
+                }
+            })
+            let text = (getFile === undefined ? "" : getFile.content)
+            text = await startTextEditor(text)
+            const newDir = {
+                name : value,
+                type: "file",
+                readRights: ["admin"],
+                writeRights: ["admin"],
+                content: text
+            }
+            if (user !== "admin") {
+                newDir.readRights.push(name)
+                newDir.writeRights.push(name)
+            }
+            if (index !== undefined) {
+                filesAndDirs[index] = newDir
+            } else {
+                filesAndDirs.push(newDir)
+            }
+            currentDir.filesAndDirs = filesAndDirs
+            updateFileSystem(fileSystem, oldDirsAndFiles, filesAndDirs)
             saveFileSystem(fileSystem)
-            return [fileSystem, currentDir]
+            resolve([fileSystem, currentDir])
+            
+            break
+        }
+        case "rm": {
+            const filesAndDirs = currentDir.filesAndDirs
+            const oldDirsAndFiles = currentDir.filesAndDirs
+            const filteredArray = filesAndDirs.filter(obj => obj.name !== value)
+            currentDir.filesAndDirs = filteredArray
+            updateFileSystem(fileSystem, oldDirsAndFiles, filesAndDirs)
+            saveFileSystem(fileSystem)
+            resolve([fileSystem, currentDir])
+            break
         }
         case "q": {
             saveFileSystem(fileSystem)
@@ -79,6 +121,8 @@ export const executeCommand = (user, fileSystem, currentDir, currentDirUrl, comm
         }
         default:
             console.log(`Incorrect command: ${command}`)
+            resolve()
+            break
     }
-}
+})
 

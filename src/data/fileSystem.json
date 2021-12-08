@@ -1,1 +1,77 @@
-{"name":"homeDir","type":"directory","readRights":["admin","user1"],"writeRights":["admin","user1"],"filesAndDirs":[{"name":"testDir1","type":"directory","readRights":["admin","user1"],"writeRights":["admin","user1"],"filesAndDirs":[]},{"name":"testDir2","type":"directory","readRights":["admin"],"writeRights":["admin"],"filesAndDirs":[]},{"name":"example.txt","type":"file","readRights":["admin","user1"],"writeRights":["admin","user1"]},{"name":"testDir3","type":"directory","readRights":["admin","admin"],"writeRights":["admin","admin"],"filesAndDirs":[]},{"name":"testDir4","type":"directory","readRights":["admin","admin"],"writeRights":["admin","admin"],"filesAndDirs":[]}],"dirsAndFiles":[{"name":"testDir1","type":"directory","readRights":["admin","user1"],"writeRights":["admin","user1"],"filesAndDirs":[]},{"name":"testDir2","type":"directory","readRights":["admin"],"writeRights":["admin"],"filesAndDirs":[]},{"name":"example.txt","type":"file","readRights":["admin","user1"],"writeRights":["admin","user1"]},{"name":"testDir3","type":"directory","readRights":["admin","admin"],"writeRights":["admin","admin"],"filesAndDirs":[]},{"name":"testDir4","type":"directory","readRights":["admin","admin"],"writeRights":["admin","admin"],"filesAndDirs":[]}]}
+{
+  "name": "homeDir",
+  "type": "directory",
+  "readRights": [
+    "admin",
+    "user1"
+  ],
+  "writeRights": [
+    "admin",
+    "user1"
+  ],
+  "filesAndDirs": [
+    {
+      "name": "testDir1",
+      "type": "directory",
+      "readRights": [
+        "admin",
+        "user1"
+      ],
+      "writeRights": [
+        "admin",
+        "user1"
+      ],
+      "filesAndDirs": []
+    },
+    {
+      "name": "testDir2",
+      "type": "directory",
+      "readRights": [
+        "admin",
+        "admin"
+      ],
+      "writeRights": [
+        "admin",
+        "admin"
+      ],
+      "filesAndDirs": [
+        {
+          "name": "testText.txt",
+          "type": "file",
+          "readRights": [
+            "admin",
+            "admin"
+          ],
+          "writeRights": [
+            "admin",
+            "admin"
+          ],
+          "content": "test line 12345"
+        }
+      ]
+    },
+    {
+      "name": "testDir3",
+      "type": "directory",
+      "readRights": [
+        "admin"
+      ],
+      "writeRights": [
+        "admin"
+      ],
+      "filesAndDirs": [
+        {
+          "name": "txt1",
+          "type": "file",
+          "readRights": [
+            "admin"
+          ],
+          "writeRights": [
+            "admin"
+          ],
+          "content": "testfsafasf"
+        }
+      ]
+    }
+  ]
+}

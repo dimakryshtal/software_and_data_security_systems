@@ -16,13 +16,13 @@ export const loadFileSystem = () => {
 }
 
 export const saveFileSystem = (json) => {
-    writeFileSync("./data/fileSystem.json", JSON.stringify(json))
+    writeFileSync("./data/fileSystem.json", JSON.stringify(json, null, 2))
 }
 
 export const updateFileSystem = (json, oldDir, newDir) => {
-    const jsonString = JSON.stringify(json);
-    const oldDirString = JSON.stringify(oldDir)
-    const newDirString = JSON.stringify(newDir)
+    const jsonString = JSON.stringify(json, null, 2);
+    const oldDirString = JSON.stringify(oldDir, null, 2)
+    const newDirString = JSON.stringify(newDir, null, 2)
     const newJson = jsonString.replace(oldDirString, newDirString)
 
     return JSON.parse(newJson)

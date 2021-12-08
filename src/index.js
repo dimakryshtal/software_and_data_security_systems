@@ -1,5 +1,5 @@
 import { getCommands, getName, getPassword } from "./commandLine/commandLine.js"
-import { users } from "./security/security.js"
+import { users } from "./security/users.js"
 import { existsSync } from "fs"
 import { loadFileSystem, createFileSystem } from "./data/fileSystem.js"
 
@@ -14,6 +14,7 @@ const main = async () => {
         if(users.some(user => user.name === name && user.password === password)) {
             userFound = name
             console.log("success")
+            console.log(name)
         }
     }
     let fileSystem = loadFileSystem()

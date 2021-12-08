@@ -1,11 +1,13 @@
-import { futimes } from 'fs'
-import { connect } from 'http2'
 import * as readline from 'readline'
 import { executeCommand } from '../commands/commands.js'
-//const { resolve } = require('path');
 
 
 const rl = readline.createInterface(process.stdin, process.stdout)
+
+
+readline.emitKeypressEvents(process.stdin);
+if (process.stdin.isTTY)
+    process.stdin.setRawMode(true);
 
 export const getName = () => new Promise((resolve, reject) => {
     readline.cursorTo(process.stdout, 0, 0)
@@ -40,26 +42,37 @@ export const getPassword = () => new Promise((resolve, reject) => {
     
 })
 
-export const getCommands = (currUser, fileSystem, currentDirUrl, currentDir = null) => new Promise ((resolve, reject) => {
+export const getCommands = (currUser, fileSystem, currentDirUrl, currentDir = null) => {
+    
     rl.stdoutMuted = false
     
     if (currentDir == null) {
         currentDir = fileSystem
     }
 
-    rl.question(currentDirUrl, (command) => {
+    rl.question(currentDirUrl, async(command) => {
         command = command.split(" ")
-        if (command[0] === "mkdir" || command[0] === "rm") {
-            [fileSystem, currentDir] = executeCommand(currUser, fileSystem, currentDir, currentDirUrl, command[0], command[1])
+        if (command[0] === "mkdir" || command[0] === "rm" || command[0] == "vi") {
+            [fileSystem, currentDir] = await executeCommand(currUser, fileSystem, currentDir, currentDirUrl, command[0], command[1])
         } else if (command[0] === "cd"){
-            [currentDir, currentDirUrl] = executeCommand(currUser, fileSystem, currentDir, currentDirUrl, command[0], command[1])
-            
+            [currentDir, currentDirUrl] = await executeCommand(currUser, fileSystem, currentDir, currentDirUrl, command[0], command[1])
         } else {
-            executeCommand(currUser, fileSystem, currentDir, currentDirUrl, command[0])
+            await executeCommand(currUser, fileSystem, currentDir, currentDirUrl, command[0])
         }
         getCommands(currUser, fileSystem, currentDirUrl, currentDir)
     })
 
+    rl.on("SIGINT", () => {
+        
+    })
+}
 
-}) 
+export const startTextEditor = (oldString = "") => new Promise((resolve, reject) => {
+    let string = oldString
+    rl.question(oldString, (inputLine) => {
+        string += inputLine
+        resolve(string)
+    });
+    
+})
 
