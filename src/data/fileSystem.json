@@ -28,10 +28,9 @@
       "type": "directory",
       "readRights": [
         "admin",
-        "admin"
+        "user1"
       ],
       "writeRights": [
-        "admin",
         "admin"
       ],
       "filesAndDirs": [
@@ -47,6 +46,18 @@
             "admin"
           ],
           "content": "test line 12345"
+        },
+        {
+          "name": "test",
+          "type": "directory",
+          "readRights": [
+            "admin",
+            "user1"
+          ],
+          "writeRights": [
+            "admin"
+          ],
+          "filesAndDirs": []
         }
       ]
     },

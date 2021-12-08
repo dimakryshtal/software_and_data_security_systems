@@ -61,10 +61,6 @@ export const getCommands = (currUser, fileSystem, currentDirUrl, currentDir = nu
         }
         getCommands(currUser, fileSystem, currentDirUrl, currentDir)
     })
-
-    rl.on("SIGINT", () => {
-        
-    })
 }
 
 export const startTextEditor = (oldString = "") => new Promise((resolve, reject) => {

@@ -50,68 +50,79 @@ export const executeCommand = (user, fileSystem, currentDir, currentDirUrl, comm
             break
         }
         case "mkdir": {
-            const filesAndDirs = currentDir.filesAndDirs
-            const oldDirsAndFiles = currentDir.filesAndDirs
-            const newDir = {
-                name : value,
-                type: "directory",
-                readRights: ["admin"],
-                writeRights: ["admin"],
-                filesAndDirs: []
+            if(currentDir.writeRights.includes(user)) {
+                const filesAndDirs = currentDir.filesAndDirs
+                const oldDirsAndFiles = currentDir.filesAndDirs
+                const newDir = {
+                    name : value,
+                    type: "directory",
+                    readRights: ["admin"],
+                    writeRights: ["admin"],
+                    filesAndDirs: []
+                }
+                if (user !== "admin") {
+                    newDir.readRights.push(name)
+                    newDir.writeRights.push(name)
+                }
+                filesAndDirs.push(newDir)
+                currentDir.filesAndDirs = filesAndDirs
+                updateFileSystem(fileSystem, oldDirsAndFiles, filesAndDirs)
+                saveFileSystem(fileSystem)
+            } else {
+                console.log(`You don't have rights to edit this directory`)
             }
-            if (user !== "admin") {
-                newDir.readRights.push(name)
-                newDir.writeRights.push(name)
-            }
-            filesAndDirs.push(newDir)
-            currentDir.filesAndDirs = filesAndDirs
-            updateFileSystem(fileSystem, oldDirsAndFiles, filesAndDirs)
-            saveFileSystem(fileSystem)
             resolve([fileSystem, currentDir])
             break
         }
         case "vi": {
-            const filesAndDirs = currentDir.filesAndDirs
-            const oldDirsAndFiles = currentDir.filesAndDirs
-            let getFile, index 
-            getFile = filesAndDirs.find((obj, i) => {
-                if (obj.name === value) {
-                    index = i
-                    return obj
+            if(currentDir.writeRights.includes(user)) {
+                const filesAndDirs = currentDir.filesAndDirs
+                const oldDirsAndFiles = currentDir.filesAndDirs
+                let getFile, index 
+                getFile = filesAndDirs.find((obj, i) => {
+                    if (obj.name === value) {
+                        index = i
+                        return obj
+                    }
+                })
+                let text = (getFile === undefined ? "" : getFile.content)
+                text = await startTextEditor(text)
+                const newDir = {
+                    name : value,
+                    type: "file",
+                    readRights: ["admin"],
+                    writeRights: ["admin"],
+                    content: text
                 }
-            })
-            let text = (getFile === undefined ? "" : getFile.content)
-            text = await startTextEditor(text)
-            const newDir = {
-                name : value,
-                type: "file",
-                readRights: ["admin"],
-                writeRights: ["admin"],
-                content: text
-            }
-            if (user !== "admin") {
-                newDir.readRights.push(name)
-                newDir.writeRights.push(name)
-            }
-            if (index !== undefined) {
-                filesAndDirs[index] = newDir
+                if (user !== "admin") {
+                    newDir.readRights.push(name)
+                    newDir.writeRights.push(name)
+                }
+                if (index !== undefined) {
+                    filesAndDirs[index] = newDir
+                } else {
+                    filesAndDirs.push(newDir)
+                }
+                currentDir.filesAndDirs = filesAndDirs
+                updateFileSystem(fileSystem, oldDirsAndFiles, filesAndDirs)
+                saveFileSystem(fileSystem)
             } else {
-                filesAndDirs.push(newDir)
+                console.log(`You don't have rights to edit this directory`)
             }
-            currentDir.filesAndDirs = filesAndDirs
-            updateFileSystem(fileSystem, oldDirsAndFiles, filesAndDirs)
-            saveFileSystem(fileSystem)
             resolve([fileSystem, currentDir])
-            
             break
         }
         case "rm": {
-            const filesAndDirs = currentDir.filesAndDirs
-            const oldDirsAndFiles = currentDir.filesAndDirs
-            const filteredArray = filesAndDirs.filter(obj => obj.name !== value)
-            currentDir.filesAndDirs = filteredArray
-            updateFileSystem(fileSystem, oldDirsAndFiles, filesAndDirs)
-            saveFileSystem(fileSystem)
+            if(currentDir.writeRights.includes(user)) {
+                const filesAndDirs = currentDir.filesAndDirs
+                const oldDirsAndFiles = currentDir.filesAndDirs
+                const filteredArray = filesAndDirs.filter(obj => obj.name !== value)
+                currentDir.filesAndDirs = filteredArray
+                updateFileSystem(fileSystem, oldDirsAndFiles, filesAndDirs)
+                saveFileSystem(fileSystem)
+            } else {
+                console.log(`You don't have rights to edit this directory`)
+            }
             resolve([fileSystem, currentDir])
             break
         }
