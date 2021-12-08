@@ -53,9 +53,17 @@ export const getCommands = (currUser, fileSystem, currentDirUrl, currentDir = nu
     rl.question(currentDirUrl, async(command) => {
         command = command.split(" ")
         if (command[0] === "mkdir" || command[0] === "rm" || command[0] == "vi") {
-            [fileSystem, currentDir] = await executeCommand(currUser, fileSystem, currentDir, currentDirUrl, command[0], command[1])
+            if(command.length == 1) {
+                console.log("Wrong number of arguments")
+            } else {
+                [fileSystem, currentDir] = await executeCommand(currUser, fileSystem, currentDir, currentDirUrl, command[0], command[1])
+            }
         } else if (command[0] === "cd"){
-            [currentDir, currentDirUrl] = await executeCommand(currUser, fileSystem, currentDir, currentDirUrl, command[0], command[1])
+            if(command.length == 1) {
+                console.log("Wrong number of arguments")
+            } else {
+                [currentDir, currentDirUrl] = await executeCommand(currUser, fileSystem, currentDir, currentDirUrl, command[0], command[1])
+            }
         } else {
             await executeCommand(currUser, fileSystem, currentDir, currentDirUrl, command[0])
         }

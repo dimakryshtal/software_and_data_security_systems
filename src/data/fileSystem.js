@@ -6,11 +6,11 @@ export const require = createRequire(import.meta.url);
 export const createFileSystem = () => {
     const fileSystemData = require("./fileSystem.json")
 
-    writeFileSync("EncodedData", JSON.stringify(fileSystemData), { flag: 'w' })
+    writeFileSync("EncodedData:S", JSON.stringify(fileSystemData))
 }
 
 export const loadFileSystem = () => {
-    const file = readFileSync("EncodedData")
+    const file = readFileSync("EncodedData:S")
     const json = JSON.parse(file)
     return json
 }

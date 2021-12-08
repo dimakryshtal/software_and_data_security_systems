@@ -45,6 +45,7 @@ export const executeCommand = (user, fileSystem, currentDir, currentDirUrl, comm
                     resolve([directory, currentDirUrl + `${directory.name}\\`])
                 } else {
                     console.log("The directory does not exit")
+                    resolve([currentDir, currentDirUrl])
                 }
             }
             break

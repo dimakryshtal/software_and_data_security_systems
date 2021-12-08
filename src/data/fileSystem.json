@@ -38,11 +38,9 @@
           "name": "testText.txt",
           "type": "file",
           "readRights": [
-            "admin",
             "admin"
           ],
           "writeRights": [
-            "admin",
             "admin"
           ],
           "content": "test line 12345"
@@ -58,6 +56,17 @@
             "admin"
           ],
           "filesAndDirs": []
+        },
+        {
+          "name": "testText2.txt",
+          "type": "file",
+          "readRights": [
+            "admin"
+          ],
+          "writeRights": [
+            "admin"
+          ],
+          "content": "test test test"
         }
       ]
     },
@@ -83,6 +92,17 @@
           "content": "testfsafasf"
         }
       ]
+    },
+    {
+      "name": "test",
+      "type": "file",
+      "readRights": [
+        "admin"
+      ],
+      "writeRights": [
+        "admin"
+      ],
+      "content": "dsadasdaj"
     }
   ]
 }
